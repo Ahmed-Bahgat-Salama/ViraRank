@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -19,12 +19,22 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<ViraRankContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
 builder.Services.AddHttpClient("AiModel", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["AiModel:BaseUrl"]!);
 });
 
+builder.Services.AddHttpClient("TrendModel", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["TrendModel:BaseUrl"]!);
+});
+
+
 builder.Services.AddScoped<SeoService>();
+
+builder.Services.AddScoped<TrendService>();
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -44,24 +54,6 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.FromMinutes(5)
     };
-
-    
-    options.Events = new JwtBearerEvents
-    {
-        OnAuthenticationFailed = context =>
-        {
-            Console.WriteLine("--- AUTHENTICATION FAILED ---");
-            Console.WriteLine($"Exception Type: {context.Exception.GetType().Name}");
-            Console.WriteLine($"Exception Message: {context.Exception.Message}");
-            Console.WriteLine(context.Exception.ToString()); 
-            return Task.CompletedTask;
-        },
-        OnTokenValidated = context =>
-        {
-            Console.WriteLine("--- TOKEN VALIDATED SUCCESSFULLY ---");
-            return Task.CompletedTask;
-        }
-    };
 });
 
 builder.Services.AddAuthorization();
@@ -75,7 +67,6 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
