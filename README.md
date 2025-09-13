@@ -1,7 +1,7 @@
 <div align="center">
-<h1>ViraRank API - Backend 🚀</h1>
+<h1>ViraRank API - Backend Service 🚀</h1>
 <p>
-The official backend service for the ViraRank application, built with ASP.NET Core 8. It provides a robust API for user management, authentication, and AI-powered SEO analysis.
+The official backend service for the ViraRank application, built with ASP.NET Core 8. It provides a robust REST API for user management, authentication, and AI-powered analysis for both SEO and viral trends.
 </p>
 
 <p>
@@ -27,14 +27,12 @@ Authentication
 
 Users
 
-SEO Analysis
+AI Analysis
 
 🤝 Contributing
 
-📜 License
-
 🏁 Getting Started
-Follow these steps to get the project up and running on your local machine.
+Follow these steps to get the project up and running on your local machine for development and testing.
 
 Prerequisites
 .NET 8 SDK
@@ -46,12 +44,12 @@ An API testing tool like Postman
 🔧 Installation & Configuration
 Clone the Repository:
 
-git clone [https://github.com/Ahmed-Bahgat-Salama/ViraRank.git](https://github.com/Ahmed-Bahgat-Salama/ViraRank.git)
+git clone [https://github.com/Ahmed-Bahgat-Salama/ViraRank-Back-End.git](https://github.com/Ahmed-Bahgat-Salama/ViraRank-Back-End.git)
 
 Create appsettings.json file:
-This file is intentionally excluded from the repository. You must create it manually in the root project folder (ViraRankCleanApi). Copy the content below into it:
+This file is intentionally excluded from the repository to protect sensitive data. You must create it manually in the root project folder (ViraRankCleanApi). Copy the content below into it.
 
-Note: Make sure the ConnectionStrings match your local SQL Server configuration.
+Note: Make sure the ConnectionStrings match your local SQL Server setup.
 
 {
   "ConnectionStrings": {
@@ -65,18 +63,21 @@ Note: Make sure the ConnectionStrings match your local SQL Server configuration.
   "AiModel": {
     "BaseUrl": "[https://omaraboelmaaty-seo-rank-classifier.hf.space/](https://omaraboelmaaty-seo-rank-classifier.hf.space/)"
   },
+  "TrendModel": {
+    "BaseUrl": "[https://omaraboelmaaty-viral-trend-detector.hf.space/](https://omaraboelmaaty-viral-trend-detector.hf.space/)"
+  },
   "Logging": { "LogLevel": { "Default": "Information", "Microsoft.AspNetCore": "Warning"}},
   "AllowedHosts": "*"
 }
 
 Create the Database:
-Open the Package Manager Console in Visual Studio and run the following commands:
+Open the Package Manager Console in Visual Studio and run the following commands in order:
 
 Add-Migration InitialCreate
 Update-Database
 
 Run the Project:
-Open the project in Visual Studio and press the green https run button.
+Open the solution in Visual Studio and press the green https run button to start the local development server.
 
 🛠️ Technology Stack
 Framework: ASP.NET Core 8
@@ -90,7 +91,7 @@ Architecture: REST API
 📖 API Endpoint Documentation
 Here are the main endpoints that the client application can consume.
 
-Base URL: The root URL for all endpoints is your localhost address (e.g., https://localhost:7186).
+Base URL: The root URL for all endpoints is your local server address (e.g., https://localhost:7224) or the public URL provided by a tunneling service like ngrok.
 
 Authentication
 Endpoint
@@ -136,14 +137,14 @@ Register Request Body:
   "birthDate": "2000-01-01T00:00:00Z",
   "gender": true,
   "password": "Password123!",
-  "githubToken": "some_token_here"
+  "githubToken": "ghp_some_token_here"
 }
 
 Login Success Response:
 
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "githubToken": "some_token_here"
+  "githubToken": "ghp_some_token_here"
 }
 
 Change Password Request Body:
@@ -173,8 +174,16 @@ Yes
 
 Fetches the current user's profile.
 
+/api/users/me
+
+PUT
+
+Yes
+
+Updates the current user's profile.
+
 <details>
-<summary>Click to see response example for Users</summary>
+<summary>Click to see request/response examples for Users</summary>
 
 Get Profile Success Response:
 
@@ -187,9 +196,16 @@ Get Profile Success Response:
   "imageUrl": null
 }
 
+Update Profile Request Body (send only the fields you want to change):
+
+{
+  "userName": "new_username",
+  "imageUrl": "[https://example.com/new_image.png](https://example.com/new_image.png)"
+}
+
 </details>
 
-SEO Analysis
+AI Analysis
 Endpoint
 
 Method
@@ -204,21 +220,43 @@ POST
 
 Yes
 
-Analyzes HTML content using an AI model.
+Analyzes HTML content for SEO-friendliness.
+
+/api/trend/analyze
+
+POST
+
+Yes
+
+Predicts if a text post is likely to go viral.
 
 <details>
-<summary>Click to see request/response examples for SEO Analysis</summary>
+<summary>Click to see request/response examples for AI Analysis</summary>
 
-Analyze HTML Request Body:
+Analyze SEO Request Body:
 
 {
   "html": "<html>...</html>"
 }
 
-Analyze HTML Success Response:
+Analyze SEO Success Response:
 
 {
   "seo_friendly": true,
   "probability": 0.987,
   "top_class": "Good"
+}
+
+Analyze Trend Request Body:
+
+{
+  "text": "Everyone is talking about the new AI features, this is going to be huge!",
+  "platform": "Twitter"
+}
+
+Analyze Trend Success Response:
+
+{
+  "viral": true,
+  "probability": 0.8746
 }
